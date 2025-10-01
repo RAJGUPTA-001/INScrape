@@ -3,7 +3,8 @@ import BorderAnimatedContainer from '../components/BorderAnimatedContainer';
 import { useLocation } from "react-router";
 import { metrics, formatNumber } from '../lib/metrics';
 import { MessageCircle, Heart, Eye } from 'lucide-react';
-
+import PostSlider from '../components/PostSlider';
+import ReelsPlayer from '../components/reelsplayer';
 
 
 
@@ -13,6 +14,10 @@ function Dashboard() {
   const location = useLocation();
   const { profile } = location.state || {}; // safely destructure
   const data_metrics = metrics(profile)
+  const recentvideo_reels  = data_metrics.allPosts
+  .filter(post => post.isVideo)
+  .reverse();
+  console.log(recentvideo_reels);
   console.log(data_metrics)
   if (!profile) {
     return (
@@ -69,7 +74,7 @@ function Dashboard() {
                   </div>
                   <div className="flex items-center justify-center md:justify-end py-1.5 space-x-2">
                     <span className="text-base text-gray-400"> Category</span>
-                  <span className="text-base text-gray-300 font-semibold">{(data_metrics.category)}</span>
+                    <span className="text-base text-gray-300 font-semibold">{(data_metrics.category)}</span>
 
                   </div>
                   <div className="flex items-center justify-center md:justify-end py-1.5 space-x-2">
@@ -94,7 +99,7 @@ function Dashboard() {
 
 
             </div>
-            <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+            <div className="flex flex-col md:flex-row items-center px-5 space-y-4 md:space-y-0 md:space-x-6">
               <div className="text-center md:text-left">
                 <h1 className="text-4xl font-bold">
 
@@ -148,7 +153,26 @@ function Dashboard() {
 
             </div>
           </section>
-          <section></section>
+
+
+
+          <section className="h-full">
+            <div className="flex flex-col md:flex-row w-full h-full">
+              {/* Left section (75%) */}
+              <div className="w-full md:w-3/4 p-4 flex items-center justify-center">
+                <div className="w-full h-full flex justify-center items-center">
+                  <PostSlider posts={data_metrics.recentPosts} />
+                </div>
+              </div>
+
+              {/* Right section (25%) */}
+              <div className="w-full md:w-1/4 p-4 flex items-center justify-center mt-4 md:mt-0">
+                <ReelsPlayer reels = {recentvideo_reels} />
+              </div>
+            </div>
+
+          </section>
+
 
 
 

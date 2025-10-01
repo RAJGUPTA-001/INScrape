@@ -87,6 +87,7 @@ export function metrics(profile) {
         timestamp: post.taken_at_timestamp,
         caption: post.edge_media_to_caption?.edges?.[0]?.node?.text || '',
         displayUrl: post.display_url || post.thumbnail_src,
+        video_url: post.video_url,
         engagementCount: likes + comments
       };
     });
@@ -99,13 +100,20 @@ export function metrics(profile) {
 
     // Calculate engagement rate (likes + comments) / followers * 100
     const totalEngagement = totalLikes + totalComments;
-    const engagementRate = basicInfo.followers > 0 
+    const engagementRate = basicInfo.followers > 0
       ? parseFloat(((totalEngagement / postsCount) / basicInfo.followers * 100).toFixed(3))
       : 0;
 
     // Get post counts from different sections
     const videoPostsCount = user.edge_felix_video_timeline?.count || 0;
     const totalPostsCount = user.edge_owner_to_timeline_media?.count || videoPostsCount;
+    let recentPosts = [];
+
+if (postDetails.length < 22) {
+  recentPosts = postDetails.slice(0, postDetails.length); // take all available posts
+} else {
+  recentPosts = postDetails.slice(12, 22); // take posts from 12 to 21
+}
 
     return {
       // Basic profile information
@@ -140,7 +148,9 @@ export function metrics(profile) {
       likesToCommentsRatio: totalComments > 0 ? parseFloat((totalLikes / totalComments).toFixed(2)) : 0,
 
       // Post details for further analysis
-      recentPosts: postDetails.slice(12, 22), // Last 10 posts
+
+
+      recentPosts: recentPosts, // Last 10 posts
       allPosts: postDetails,
 
       // Engagement rate categories
