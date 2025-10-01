@@ -12,8 +12,8 @@ function App() {
       {/* <Route element={<BackgroundLayout />}>
       <Route path='/' element={<Homepage />} /> 
       </Route> */}
-      <Route path='/api/home' element={<Homepage />} /> 
-      <Route path='/api/show' element={<Dashboard />} />
+      <Route path='/home' element={<Homepage />} /> 
+      <Route path='/show' element={<Dashboard />} />
       <Route path='*' element={<Homepage />} /> 
       
     </Routes>
@@ -22,3 +22,5 @@ function App() {
 }
 
 export default App;
+
+

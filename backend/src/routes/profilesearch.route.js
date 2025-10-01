@@ -60,37 +60,30 @@ router.get("/", async (req, res) => {
       // 2a. If Profile exists, return it
       console.log('Profile found in DB.');
       return res.status(200).json(profile);
-    } else {
+    }
+    else {
       // 2b. If not, generate it with Python
       console.log('Profile not found. searhcingweb with Python...');
-      let newProfileData = await generateProfileWithPython(username);
-      try {
-        newProfileData = await readMyFile(username)
-        if (newProfileData) {
-          // 3. Store the new Profile in MongoDB
-          profile = new Profile({
-            identifier: username,
-            ...newProfileData // Spread the data returned from Python
-          });
-          await profile.save();
-          console.log('New Profile saved to DB.');
-        }
-        
+      await generateProfileWithPython(username);
+
+      const newProfileData = await readMyFile(username)
+      if (newProfileData) {
+        profile = new Profile({
+          identifier: username,
+          ...newProfileData,
+        });
+        await profile.save();
+        console.log("New Profile saved to DB.");
+        return res.status(201).json(profile);
       }
-      catch (error) {
-        console.error('FILE NOT FOUND', error);
-        res.status(500).json({ message: 'PROFILE NOT FOUND OR INCORRECT USERNAME' });
-
-
-
+      else {
+        console.error('FILE NOT FOUND');
+        return res.status(404).json({ message: 'PROFILE NOT FOUND OR INCORRECT USERNAME' });
       }
 
-
-      // 4. Return the newly created Profile
-      // Use status 201 to indicate a resource was created
-      return res.status(201).json(profile);
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error processing Profile:', error);
     res.status(500).json({ message: 'Server error' });
   }

@@ -19,9 +19,9 @@ function ProfileSlider({ profiles }) {
     console.log("Fetching data...(id)");
 
     const response = await axios.get(`http://localhost:3000/api/fetchdata?id=${profileid}`);
-    const data = response.data;
+    const profile = response.data;
 
-    navigate('/api/show', { state: { fetchedData: data } });
+    navigate('/show', { state: { profile: profile } });
   } catch (error) {
     console.error("Failed to fetch data:", error);
     // You can show an alert or toast here
