@@ -1,5 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Info } from 'lucide-react';
+import PostDetailModal from './postdetailmodel';
+
+
+
+
+
 
 const ReelsPlayer = ({ reels }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -7,9 +13,11 @@ const ReelsPlayer = ({ reels }) => {
   const [isMuted, setIsMuted] = useState(true); // Start muted by default
   const videoRef = useRef(null);
   const containerRef = useRef(null);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const currentReel = reels[currentIndex];
-
+  console.log({currentReel})
   // Auto-play when reel changes
   useEffect(() => {
     const video = videoRef.current;
@@ -20,6 +28,25 @@ const ReelsPlayer = ({ reels }) => {
       }).catch(console.error);
     }
   }, [currentIndex]);
+
+
+  // ✅ ADDED: Modal control functions
+  const openModal = (post) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
+  };
+
+  const handleDoubleClick = (e) => {
+    togglePlayPause();
+    e.stopPropagation();
+    openModal(currentReel);
+  };
+
 
   // Handle video ended - go to next reel
   useEffect(() => {
@@ -69,47 +96,72 @@ const ReelsPlayer = ({ reels }) => {
     return () => container.removeEventListener('wheel', handleScroll);
   }, [currentIndex]);
 
-  // Handle touch/swipe for mobile
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
 
-    let startY = 0;
-    let isSwping = false;
+  // ✅ ADDED: Escape key handler
+useEffect(() => {
+  const handleEscape = (e) => {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+  };
 
-    const handleTouchStart = (e) => {
-      startY = e.touches[0].clientY;
-      isSwping = false;
-    };
+  if (isModalOpen) {
+    document.addEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+  }
 
-    const handleTouchMove = (e) => {
-      if (isSwping) return;
+  return () => {
+    document.removeEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'unset';
+  };
+}, [isModalOpen]);
 
-      const currentY = e.touches[0].clientY;
-      const diff = startY - currentY;
 
-      // Minimum swipe distance
-      if (Math.abs(diff) > 50) {
-        isSwping = true;
 
-        if (diff > 0) {
-          // Swipe up - next video
-          handleNext();
-        } else {
-          // Swipe down - previous video
-          handlePrevious();
-        }
-      }
-    };
 
-    container.addEventListener('touchstart', handleTouchStart);
-    container.addEventListener('touchmove', handleTouchMove);
 
-    return () => {
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-    };
-  }, [currentIndex]);
+
+  // // Handle touch/swipe for mobile
+  // useEffect(() => {
+  //   const container = containerRef.current;
+  //   if (!container) return;
+
+  //   let startY = 0;
+  //   let isSwping = false;
+
+  //   const handleTouchStart = (e) => {
+  //     startY = e.touches[0].clientY;
+  //     isSwping = false;
+  //   };
+
+  //   const handleTouchMove = (e) => {
+  //     if (isSwping) return;
+
+  //     const currentY = e.touches[0].clientY;
+  //     const diff = startY - currentY;
+
+  //     // Minimum swipe distance
+  //     if (Math.abs(diff) > 50) {
+  //       isSwping = true;
+
+  //       if (diff > 0) {
+  //         // Swipe up - next video
+  //         handleNext();
+  //       } else {
+  //         // Swipe down - previous video
+  //         handlePrevious();
+  //       }
+  //     }
+  //   };
+
+  //   container.addEventListener('touchstart', handleTouchStart);
+  //   container.addEventListener('touchmove', handleTouchMove);
+
+  //   return () => {
+  //     container.removeEventListener('touchstart', handleTouchStart);
+  //     container.removeEventListener('touchmove', handleTouchMove);
+  //   };
+  // }, [currentIndex]);
 
   const handleNext = () => {
     if (currentIndex < reels.length - 1) {
@@ -153,10 +205,12 @@ const ReelsPlayer = ({ reels }) => {
   }
 
   return (
-    <div 
+    <>
+    <div
       ref={containerRef}
       className="relative w-full h-3/5  md:h-full bg-black overflow-hidden cursor-pointer select-none rounded-xl"
       onClick={togglePlayPause}
+      onDoubleClick={handleDoubleClick}
     >
       {/* Video Player */}
       <video
@@ -171,17 +225,27 @@ const ReelsPlayer = ({ reels }) => {
       />
 
       {/* Play/Pause Overlay */}
-      <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
-        !isPlaying ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      }`}>
+      <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${!isPlaying ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}>
         <div className="bg-black/50 rounded-full p-6">
           <Play size={48} className="text-white ml-1" />
         </div>
       </div>
-
-      {/* Minimal Controls */}
+     
       <div className="absolute top-4 right-4 flex flex-col gap-3">
-        {/* Mute/Unmute */}
+   
+  
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            openModal(currentReel);
+            togglePlayPause();
+          }}
+          className="bg-black/50 hover:bg-black/70 p-2 rounded-full text-white transition-colors"
+          title="View details"
+        >
+          <Info size={20} />
+        </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -196,7 +260,7 @@ const ReelsPlayer = ({ reels }) => {
       {/* Progress Indicator */}
       <div className="absolute bottom-4 left-4 right-4">
         <div className="w-full h-1 bg-white/30 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-white rounded-full transition-all duration-100"
             style={{
               width: `${((currentIndex + 1) / reels.length) * 100}%`
@@ -214,7 +278,16 @@ const ReelsPlayer = ({ reels }) => {
       <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 text-white/70 text-sm text-center">
         <p>Scroll or swipe to navigate</p>
       </div>
+      
     </div>
+    <PostDetailModal 
+      post={selectedPost}
+      isOpen={isModalOpen}
+      onClose={closeModal}
+    />
+    </>
+    
+    
   );
 };
 

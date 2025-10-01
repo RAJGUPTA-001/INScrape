@@ -61,27 +61,90 @@ router.get("/", async (req, res) => {
       console.log('Profile found in DB.');
       return res.status(200).json(profile);
     }
+    // else {
+    //   // 2b. If not, generate it with Python
+    //   console.log('Profile not found. searhcingweb with Python...');
+    //   await generateProfileWithPython(username);
+
+    //   const newProfileData = await readMyFile(username)
+    //   if (newProfileData) {
+    //     profile = new Profile({
+    //       identifier: username,
+    //       ...newProfileData,
+    //     });
+    //     await profile.save();
+    //     console.log("New Profile saved to DB.");
+    //     return res.status(201).json(profile);
+    //   }
+    //   else {
+    //     console.error('FILE NOT FOUND');
+    //     return res.status(404).json({ message: 'PROFILE NOT FOUND OR INCORRECT USERNAME' });
+    //   }
+
+    // }
+
     else {
-      // 2b. If not, generate it with Python
-      console.log('Profile not found. searhcingweb with Python...');
+      // 2b. Generate profile with Python
+      console.log('Profile not found. Searching web with Python...');
       await generateProfileWithPython(username);
 
-      const newProfileData = await readMyFile(username)
+      const newProfileData = await readMyFile(username);
       if (newProfileData) {
+        // 3. Save basic profile to DB
         profile = new Profile({
           identifier: username,
           ...newProfileData,
+          insights_status: 'processing',     // ✅ Mark as processing
+          llmProcessed: false,      // ✅ Flag for LLM processing
         });
         await profile.save();
         console.log("New Profile saved to DB.");
-        return res.status(201).json(profile);
+        res.status(201).json(profile);
+
+        // ✅ PROCESS WITH LLM IN BACKGROUND (don't await)
+        processProfileWithLLM(profile._id, newProfileData)
+          .catch(err => console.error('Background LLM processing failed:', err));
+
+        return; // ✅ Exit after sending response
       }
       else {
         console.error('FILE NOT FOUND');
         return res.status(404).json({ message: 'PROFILE NOT FOUND OR INCORRECT USERNAME' });
       }
-
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   }
   catch (error) {
     console.error('Error processing Profile:', error);

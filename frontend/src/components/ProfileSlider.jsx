@@ -33,7 +33,7 @@ function ProfileSlider({ profiles }) {
     <div className="relative w-full max-w-[90rem] px-16">
       <Swiper
         effect={'coverflow'}
-        grabCursor={true}
+        grabCursor={false}
         centeredSlides={true}
         loop={true}
         // CHANGE 2: Set slidesPerView to 3 for more predictable behavior
@@ -51,7 +51,9 @@ function ProfileSlider({ profiles }) {
         }}
         mousewheel={true}
         modules={[EffectCoverflow, Navigation, Mousewheel]}
-        className="profile-slider"
+        className="profile-slider"         // ← important
+        preventClicksPropagation={false}
+      
       >
         {profiles.map(profile => (
           <SwiperSlide key={profile.id}>

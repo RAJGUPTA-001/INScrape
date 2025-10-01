@@ -3,7 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 import path, { dirname } from "path";
 import {connectdb} from "./lib/db.js";
-import profiledatasearch from "./routes/profilesearch.route.js"
+import profiledatasearch from "./routes/searchprofile.route.js"
 import fetchprofile from "./routes/fetchprofile.route.js"
 import cors from 'cors';
 // In server.js

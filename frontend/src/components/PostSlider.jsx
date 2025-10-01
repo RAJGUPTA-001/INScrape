@@ -1,14 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/effect-coverflow';
 import 'swiper/css/navigation';
-import { EffectCoverflow, Navigation, Mousewheel } from 'swiper/modules';
-import { useNavigate } from 'react-router';
-import axios from 'axios';
-
-
-
+import 'swiper/css/effect-coverflow';
+import { EffectCoverflow, Navigation,Mousewheel } from 'swiper/modules';
+import { X, Heart, MessageCircle, Share, Bookmark, Eye, Calendar } from 'lucide-react';
+import PostDetailModal from './postdetailmodel';
 
 function formatNumber(num) {
   if (num >= 1000000000) {
@@ -21,87 +17,129 @@ function formatNumber(num) {
   return num.toLocaleString();
 }
 
+// Modal Component for detailed post information
+PostDetailModal();
 
-
-
-
-
-// This component receives the profiles as a prop
+// Main PostSlider Component
 function PostSlider({ posts }) {
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   if (!posts || posts.length === 0) {
     return <div className="text-white">No posts to display.</div>;
   }
- const navigate = useNavigate();
 
-//   const onProfileClick = async (profileid) => {
-//   try {
-//     console.log("Fetching data...(id)");
+  const onPostClick = (post) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
 
-//     const response = await axios.get(`http://localhost:3000/api/fetchdata?id=${profileid}`);
-//     const profile = response.data;
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
+  };
 
-//     navigate('/show', { state: { profile: profile } });
-//   } catch (error) {
-//     console.error("Failed to fetch data:", error);
-//     // You can show an alert or toast here
-//   }
-// };
+  // Close modal on escape key
+  React.useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') closeModal();
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen]);
 
   return (
-    // CHANGE 1: Added a new parent div with padding to make space for the buttons
-    <div className="relative w-full max-w-[90rem] px-16">
-      <Swiper
-        effect={'coverflow'}
-        grabCursor={true}
-        centeredSlides={true}
-        loop={true}
-        // CHANGE 2: Set slidesPerView to 3 for more predictable behavior
-        slidesPerView={5}
-        coverflowEffect={{
-          rotate: 10,
-          stretch: -7,
-          depth: 100,
-          modifier: 2.5,
-          slideShadows: false,
-        }}
-        navigation={{
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        }}
-        mousewheel={true}
-        modules={[EffectCoverflow, Navigation, Mousewheel]}
-        className="profile-slider"
-      >
-        {posts.map(post => (
-          <SwiperSlide key={post.id}>
-            {({ isActive }) => (
-              <div
-              onClick={() => onProfileClick(posts.id)}
-                className={`flex flex-col items-center p-8 rounded-2xl shadow-lg transition-all duration-300 ${
-                  isActive ? 'scale-100 bg-white' : 'scale-75 bg-white/50'
-                }`}
-              >
-                <img
-                  src={`/api/image-proxy?url=${encodeURIComponent(post.displayUrl)}`}
-                  alt={post.caption.split(" ")[0]}
-                  className="w-30 h-30 rounded-full mb-4 border-2 border-slate-300"
-                />
-                <p className="text-slate-700">{formatNumber(post.comments)}com</p>
-                <p className="text-slate-700">{formatNumber(post.likes)} likes</p>
-                <p className="text-xl font-bold text-slate-800">{post.caption.split(" ").slice(0,3).join(" ")}...</p>
-                
+    <>
+      <div className="relative w-full max-w-[90rem] px-16">
+            <Swiper
+              effect={'coverflow'}
+              grabCursor={false}
+              centeredSlides={true}
+              loop={true}
+              // CHANGE 2: Set slidesPerView to 3 for more predictable behavior
+              slidesPerView={5}
+              coverflowEffect={{
+                rotate: 10,
+                stretch: -7,
+                depth: 100,
+                modifier: 2.5,
+                slideShadows: false,
+              }}
+              navigation={{
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+              }}
+              mousewheel={true}
+              modules={[EffectCoverflow, Navigation, Mousewheel]}
+              className="profile-slider"         // ← important
+              preventClicksPropagation={false}
+            
+            >
+          {posts.map(post => (
+            <SwiperSlide key={post.id}>
+              {({ isActive }) => (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPostClick(post);    // Fixed: Pass entire post object
+                  }}
+                  className={`
+                    flex flex-col items-center p-8 rounded-2xl shadow-lg 
+                    transition-all duration-300 cursor-pointer relative
+                    ${isActive 
+                      ? 'scale-100 bg-white z-20 hover:shadow-xl' 
+                      : 'scale-75 bg-white/50 z-10 hover:bg-white/70'
+                    }
+                  `}
+                >
+                  {/* Video indicator */}
+                  {post.isVideo && (
+                    <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                      Video
+                    </div>
+                  )}
 
-              </div>
-            )}
-          </SwiperSlide>
-        ))}
-      </Swiper>
+                  <img
+                    src={`/api/image-proxy?url=${encodeURIComponent(post.displayUrl)}`}
+                    alt={post.caption?.split(" ")[0] || "Post"}
+                    className="w-30 h-30 rounded-full mb-4 border-2 border-slate-300 object-cover"
+                    draggable={false}
+                  />
+                  
+                  <p className="text-slate-700">{formatNumber(post.comments)} comments</p>
+                  <p className="text-slate-700">{formatNumber(post.likes)} likes</p>
+                  {post.views && <p className="text-slate-700">{formatNumber(post.views)} views</p>}
+                  
+                  <p className="text-xl font-bold text-slate-800 text-center mt-2">
+                    {post.caption?.split(" ").slice(0,3).join(" ") || "No caption"}...
+                  </p>
 
-      {/* CHANGE 3: Buttons are now positioned absolutely within the padded parent */}
-      {/* <div className="swiper-button-prev absolute top-1/2 -translate-y-1/2 left-0 text-slate-700 after:text-3xl font-extrabold"></div>
-      <div className="swiper-button-next absolute top-1/2 -translate-y-1/2 right-0 text-slate-700 after:text-3xl font-extrabold"></div> */}
-    </div>
+                  {isActive && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                  )}
+                </div>
+              )}
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      {/* Modal */}
+      <PostDetailModal 
+        post={selectedPost}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
+    </>
   );
 }
 
-export default PostSlider ;
+export default PostSlider;
