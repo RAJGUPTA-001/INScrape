@@ -21,7 +21,7 @@ function formatNumber(num) {
 PostDetailModal();
 
 // Main PostSlider Component
-function PostSlider({ posts }) {
+function PostSlider({ posts , profiledata }) {
   const [selectedPost, setSelectedPost] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -30,6 +30,7 @@ function PostSlider({ posts }) {
   }
 
   const onPostClick = (post) => {
+    console.log(post)
     setSelectedPost(post);
     setIsModalOpen(true);
   };
@@ -55,6 +56,12 @@ function PostSlider({ posts }) {
       document.body.style.overflow = 'unset';
     };
   }, [isModalOpen]);
+ 
+
+  
+
+
+
 
   return (
     <>
@@ -137,6 +144,7 @@ function PostSlider({ posts }) {
         post={selectedPost}
         isOpen={isModalOpen}
         onClose={closeModal}
+        profiledata={profiledata}
       />
     </>
   );

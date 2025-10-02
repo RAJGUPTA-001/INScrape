@@ -161,7 +161,7 @@ function Dashboard() {
               {/* Left section (75%) */}
               <div className="w-full md:w-3/4 p-4 flex items-center justify-center">
                 <div className="w-full h-full flex justify-center items-center">
-                  <PostSlider posts={data_metrics.recentPosts} />
+                  <PostSlider posts={data_metrics.recentPosts} profiledata={profile} />
                 </div>
               </div>
 

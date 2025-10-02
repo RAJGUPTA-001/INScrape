@@ -3,6 +3,9 @@ import { readFile } from 'node:fs/promises';
 import { PythonShell } from 'python-shell';
 import path, { dirname } from "path";
 import Profile from '../models/flexidataschema.js';
+import processProfileWithLLM from "../utils/processProfileWithLLM.utils.js";
+
+
 
 const router = express.Router();
 const __dirname = path.resolve();
@@ -89,12 +92,12 @@ router.get("/", async (req, res) => {
       await generateProfileWithPython(username);
 
       const newProfileData = await readMyFile(username);
-      if (newProfileData) {
+      if (newProfileData.status==='ok') {
         // 3. Save basic profile to DB
         profile = new Profile({
           identifier: username,
           ...newProfileData,
-          insights_status: 'processing',     // ✅ Mark as processing
+          ai_insights_status: 'processing',     // ✅ Mark as processing
           llmProcessed: false,      // ✅ Flag for LLM processing
         });
         await profile.save();
@@ -102,14 +105,14 @@ router.get("/", async (req, res) => {
         res.status(201).json(profile);
 
         // ✅ PROCESS WITH LLM IN BACKGROUND (don't await)
-        processProfileWithLLM(profile._id, newProfileData)
+        processProfileWithLLM(profile._id, profile)
           .catch(err => console.error('Background LLM processing failed:', err));
 
         return; // ✅ Exit after sending response
       }
       else {
         console.error('FILE NOT FOUND');
-        return res.status(404).json({ message: 'PROFILE NOT FOUND OR INCORRECT USERNAME' });
+        return res.status(404).json({ message: 'PROCESS FAILED OR INCORRECT USERNAME' });
       }
     }
 

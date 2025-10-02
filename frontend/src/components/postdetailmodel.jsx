@@ -1,6 +1,15 @@
 import { X, Heart, MessageCircle, Share, Bookmark, Eye, Calendar } from 'lucide-react';
-const PostDetailModal = ({ post, isOpen, onClose } = {}) => {
+const PostDetailModal = ({ post, isOpen, onClose, profiledata } = {}) => {
 
+
+  let ai_analysis = null
+  profiledata?.ai_analysis_image?.forEach(element => {
+    if (element?.id === post?.id) {         // post always has id but post is passed at param only when clicked so this keeps breaking  thats why use post?.id
+      ai_analysis = element?.ai_analysis
+    }
+
+
+  });
 
   if (!isOpen || !post) return null;
 
@@ -51,14 +60,53 @@ const PostDetailModal = ({ post, isOpen, onClose } = {}) => {
 
           {/* Content */}
           <div className="flex-1 p-4 overflow-y-auto">
-            <p className="text-gray-800 leading-relaxed mb-6">{post.caption}</p>
 
-           
+            <p className="text-gray-800 leading-relaxed mb-2 border-b border-gray-300 pb-4 mb-6">Caption - {post.caption}</p>
+            <p className="text-gray-800 leading-relaxed border-b border-gray-300 pb-4 mb-6">AI analysis as following </p>
 
-            
+
+
+
+            <p className="text-gray-800 leading-relaxed mb-6">content category - {ai_analysis?.analysis.content_category}</p>
+            <p className="text-gray-800 leading-relaxed mb-6 break-words whitespace-pre-wrap"></p>
+            <p className="text-gray-800 leading-relaxed mb-6 flex flex-wrap gap-2">HASHTAGS
+              {ai_analysis?.analysis.keywords?.map((vibe, i) => (
+                <span
+                  key={i}
+                  className="px-2 py-1 bg-blue-100 rounded-md text-sm text-blue-700"
+                >
+                  {vibe}
+                </span>
+              ))}
+            </p>
+            <p className="text-gray-800 leading-relaxed mb-6 flex flex-wrap gap-2">
+              VIBE {ai_analysis?.analysis.vibe.primary?.map((vibe, i) => (
+                <span
+                  key={i}
+                  className="px-2 py-1 bg-blue-100 rounded-md text-sm text-blue-700"
+                >
+                  {vibe}
+                </span>
+              ))}
+            </p>
+
+
+            <p className="text-gray-800 leading-relaxed mb-6">Lighting - {ai_analysis?.analysis.quality.lighting}</p>
+            <p className="text-gray-800 leading-relaxed mb-6">Visual appeal - {ai_analysis?.analysis.quality.visual_appeal}</p>
+            <p className="text-gray-800 leading-relaxed mb-6">Consistency - {ai_analysis?.analysis.quality.consistency}</p>
+            <p className="text-gray-800 leading-relaxed mb-6">Consistency - {ai_analysis?.analysis.quality.consistency}</p>
+            <p className="text-gray-800 leading-relaxed mb-6">Generated Caption - {ai_analysis?.analysis.image_caption}</p>
+
+
+
+            {/* <p className="text-gray-800 leading-relaxed mb-6">{ai_analysis?.analysis.quality.technical}</p> */}
+
+
+
+
           </div>
 
-          
+
         </div>
       </div>
     </div>
