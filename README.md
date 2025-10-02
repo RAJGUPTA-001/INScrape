@@ -48,9 +48,17 @@ Can scrape any public profile and generate insights from scraped data, image pro
 > make sure its in backend folder
 
 PORT=3000||or your preferred port
+
+
 NODE_ENV=production
+
+
 MONGO_URL=mongodb://127.0.0.1:27017/your_database_name  
+
+
 ENV_PATH= /path/to/virtual/enviroment/or/your/python/interpreter
+
+
 GEMINI_API_KEY=[GET YOUR KEY FROM](https://aistudio.google.com/api-keys)
 
 
