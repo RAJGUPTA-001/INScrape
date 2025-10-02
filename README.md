@@ -14,11 +14,11 @@ Can scrape any public profile and generate insights from scraped data, image pro
 
 - [Credits](#credits)
 
-- [Example fetched data](#example_data)
 
 
 
-## ✨ Features
+
+# ✨ Features
 
  - scrapes data from public instagram profiles
  - displays post and video/reels on dashboard with original caption likes ,  comments and views count 
@@ -30,7 +30,7 @@ Can scrape any public profile and generate insights from scraped data, image pro
 
 
 
-## 🛠️ Installation
+# 🛠️ Installation
 
 ### Prerequisites
 (Suggested , to avoid any dependency issue)
@@ -113,7 +113,7 @@ npm run start
 
 
 
-## Details
+# Details
 
 
 IT fetches public instagrams profile data and stores it in database (local in this case)
@@ -149,7 +149,7 @@ the reels and side cars are on the edge_owner_to_timeline_media node.
 
 
 
-## Credits 
+# Credits 
   
 
 https://github.com/kevmaindev
