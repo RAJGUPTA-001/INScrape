@@ -73,16 +73,16 @@ GEMINI_API_KEY=[GET YOUR KEY FROM](https://aistudio.google.com/api-keys)
 
 
 
-###run from terminal - 
+### run from terminal - 
 
 
-Multiple lines:
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/RAJGUPTA-001/INScrape.git
+   cd INScrape
+   ```
 
 
-''' bash
-git clone https://github.com/RAJGUPTA-001/INScrape.git
-cd INScrape
-'''
 
 
 > Consider making virtual enviroment for python interpreter
@@ -92,17 +92,21 @@ cd INScrape
 
 from root run - 
 
-(some unnecesary libraries are also included 😶)
 
-Single line: pip install -r requirements.txt
+(some unnecesary libraries are also included 😶)
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+
 
 ### Starting application
 from root - 
 
-Multiple lines:
+```bash
 npm run build
 npm run start
-
+```
 > application at localhost:3000 
 > or configure the port at .env file
 
@@ -159,6 +163,7 @@ https://github.com/kevmaindev
 
 
 ## example data
+```bash
 
 {
     "data": {
@@ -850,3 +855,4 @@ https://github.com/kevmaindev
     },
     "status": "ok"
 }
+```
