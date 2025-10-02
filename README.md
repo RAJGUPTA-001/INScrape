@@ -2,9 +2,7 @@
 
 Can scrape any public profile and generate insights from scraped data, image processing using GOOGLE cloud for detail caption. 
 
-[![GitHub stars](https://img.shields.io/github/stars/username/repo)](https://github.com/username/repo/stargazers)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Build Status](https://img.shields.io/travis/username/repo)](https://travis-ci.org/username/repo)
+
 
 ## 📋 Table of Contents
 
@@ -67,9 +65,15 @@ GEMINI_API_KEY=[GET YOUR KEY FROM](https://aistudio.google.com/api-keys)
 
 
 run from terminal - 
+
+
 Multiple lines:
+
+
+'''
 git clone https://github.com/RAJGUPTA-001/INScrape.git
 cd INScrape
+'''
 
 
 > Consider making virtual enviroment for python interpreter
