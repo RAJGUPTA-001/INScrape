@@ -64,13 +64,22 @@ GEMINI_API_KEY=[GET YOUR KEY FROM](https://aistudio.google.com/api-keys)
 
 
 
-run from terminal - 
+
+
+
+
+
+
+
+
+
+###run from terminal - 
 
 
 Multiple lines:
 
 
-'''
+''' bash
 git clone https://github.com/RAJGUPTA-001/INScrape.git
 cd INScrape
 '''
