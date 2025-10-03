@@ -31,7 +31,7 @@ app.get('/api/image-proxy', async (req, res) => {
     console.log("recieved")
   const url = req.query.url;
   const response = await fetch(url);
-  res.set('Content-Type', response.headers.get('content-type'));
+   // res.set('Content-Type', response.headers.get('content-type'));  //uncomment if content type not detected 
   res.set('Access-Control-Allow-Origin','*');
   response.body.pipe(res);
 });
